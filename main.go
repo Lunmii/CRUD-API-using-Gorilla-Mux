@@ -53,11 +53,31 @@ func createGame(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateGame(w http.ResponseWriter, r *http.Request) {
-
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	for index, item := range games {
+		if item.ID == params["id"] {
+			games = append(games[:index], games[index+1:]...)
+		}
+	}
+	json.NewEncoder(w).Encode(games)
+	var game Game
+	_ = json.NewDecoder(r.Body).Decode(&game)
+	game.ID = params["id"]
+	games = append(games, game)
+	json.NewEncoder(w).Encode(game)
 }
 
 func deleteGame(w http.ResponseWriter, r *http.Request) {
-
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	for index, item := range games {
+		if item.ID == params["id"] {
+			games = append(games[:index], games[index+1:]...)
+			break
+		}
+	}
+	json.NewEncoder(w).Encode(games)
 }
 
 func main() {
